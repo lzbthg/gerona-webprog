@@ -16,12 +16,16 @@ const navLinkClassName = ({ isActive }) =>
 
 const NavBar = () => {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b-2 border-[#8B5E3C] bg-[#F5F1E8]">
+    <header className="fixed inset-x-0 top-0 z-50 border-b-2 border-[#8B5E3C] bg-[#F5E8DC]"> 
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         
         <NavLink to="/" className="flex items-center gap-3">
           <div className="space-y-0.5">
-            <img src="src/assets/styles/capy-logo3.png" alt="Logo" className="h-15 w-auto object-contain" />
+            <img
+              src="src/assets/capy-logo3.png"
+              alt="Logo"
+              className="h-12 w-auto object-contain" 
+            />
           </div>
         </NavLink>
 

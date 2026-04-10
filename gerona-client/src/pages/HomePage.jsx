@@ -2,8 +2,7 @@ import Button from "../components/Button";
 
 const HomePage = () => {
   return (
-    <div className="flex w-full flex-col gap-6">
-      {/* Hero Section */}
+    <div className="flex w-full flex-col gap-6 bg-[#FFF3E6]">
       <section className="border-y-2 border-[#8B5E3C] bg-[#FFF8F0] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
@@ -31,7 +30,7 @@ const HomePage = () => {
 
           <div className="rounded-3xl border-2 border-dashed border-[#D9C2A7] bg-[#FFF3E6] p-6">
             <img
-              src="src/assets/styles/capy1.jpg"
+              src="src/assets/capy1.jpg"
               alt="capybara"
               className="rounded-xl w-full"
             />
@@ -39,7 +38,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Capybara Facts Section */}
       <section className="border-y-2 border-[#8B5E3C] bg-[#FFF8F0] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#7C9A6D]">
@@ -74,7 +72,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Nature Wonders Section */}
       <section className="border-y-2 border-[#8B5E3C] bg-[#FFF8F0] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#7C9A6D]">
@@ -89,7 +86,7 @@ const HomePage = () => {
         <div className="grid gap-4 md:grid-cols-3">
           <article className="rounded-3xl border-2 border-[#D9C2A7] bg-[#FFF3E6] p-4">
             <img
-              src="src/assets/styles/capy-swim2.jpg"
+              src="src/assets/capy-swim2.jpg"
               className="rounded-xl w-full"
             />
 
@@ -108,7 +105,7 @@ const HomePage = () => {
 
           <article className="rounded-3xl border-2 border-[#D9C2A7] bg-[#FFF3E6] p-4">
             <img
-              src="src/assets/styles/capy-friendly4.jpg"
+              src="src/assets/capy-friendly4.jpg"
               className="rounded-xl w-full"
             />
 
@@ -127,7 +124,7 @@ const HomePage = () => {
 
           <article className="rounded-3xl border-2 border-[#D9C2A7] bg-[#FFF3E6] p-4">
             <img
-              src="src/assets/styles/capy-swim3.jpg"
+              src="src/assets/capy-swim3.jpg"
               className="rounded-xl w-full"
             />
 
