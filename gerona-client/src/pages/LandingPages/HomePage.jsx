@@ -1,4 +1,4 @@
-import Button from "../components/Button";
+import Button from "../../components/Button";
 
 const HomePage = () => {
   return (
@@ -98,7 +98,7 @@ const HomePage = () => {
               Capybaras live near rivers and lakes and enjoy swimming.
             </p>
 
-            <Button className="mt-4 bg-green-400 hover:bg-green-500 text-white">
+            <Button className="mt-4" variant="primary">
               View More
             </Button>
           </article>
@@ -117,7 +117,7 @@ const HomePage = () => {
               They are known for being calm and friendly with other animals.
             </p>
 
-            <Button className="mt-4 bg-green-400 hover:bg-green-500 text-white">
+            <Button className="mt-4" variant="primary">
               View More
             </Button>
           </article>
@@ -136,7 +136,7 @@ const HomePage = () => {
               Capybaras can stay underwater for several minutes.
             </p>
 
-            <Button className="mt-4 bg-green-400 hover:bg-green-500 text-white">
+            <Button className="mt-4" variant="primary">
               View More
             </Button>
           </article>

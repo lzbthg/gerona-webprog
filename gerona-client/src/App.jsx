@@ -1,36 +1,56 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import './assets/styles/index.css';
+import "./assets/styles/index.css";
 
 // HomePage Structure
-import Layout from './components/Layout';
-import ArticlePage from './pages/ArticlePage';
-import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
-import ArticleListPage from './pages/ArticleListPage';
+import Layout from "./layouts/Layout";
+import ArticlePage from "./pages/LandingPages/ArticlePage";
+import HomePage from "./pages/LandingPages/HomePage";
+import AboutPage from "./pages/LandingPages/AboutPage";
+import ArticleListPage from "./pages/LandingPages/ArticleListPage";
+
+import AuthLayout from "./layouts/AuthLayout";
+import SignInPage from "./pages/AuthPages/SignInPage";
+import SignUpPage from "./pages/AuthPages/SignUpPage";
+
 import NotFoundPage from "./pages/NotFoundPage";
 
 const routes = [
   {
-    path: '/',
+    path: "/",
     element: <Layout />,
     errorElement: <NotFoundPage />,
     children: [
       {
-        path: '',
+        path: "",
         element: <HomePage />,
       },
       {
-        path: '/about',
+        path: "/about",
         element: <AboutPage />,
       },
       {
-        path: '/articles',
+        path: "/articles",
         element: <ArticleListPage />,
       },
       {
-        path: '/articles/:name',
+        path: "/articles/:name",
         element: <ArticlePage />,
-      }
+      },
+    ],
+  },
+  {
+    path: "/auth",
+    element: <AuthLayout />,
+    errorElement: <NotFoundPage />,
+    children: [
+      {
+        path: "signin",
+        element: <SignInPage />,
+      },
+      {
+        path: "signup",
+        element: <SignUpPage />,
+      },
     ],
   },
 ];

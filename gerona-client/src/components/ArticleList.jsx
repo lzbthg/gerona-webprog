@@ -33,7 +33,7 @@ const ArticleList = ({ articles }) => {
           </div>
 
           <Link to={`/articles/${article.name}`}>
-            <Button className="mt-4 bg-[#7C9A6D] text-white">Read More</Button>
+            <Button className="mt-4">Read More</Button>
           </Link>
         </article>
       ))}

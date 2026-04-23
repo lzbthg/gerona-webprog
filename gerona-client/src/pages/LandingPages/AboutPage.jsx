@@ -1,4 +1,4 @@
-import Button from "../components/Button";
+import Button from "../../components/Button";
 
 const AboutPage = () => {
   return (
@@ -32,11 +32,10 @@ const AboutPage = () => {
               <Button
                 to="/"
                 variant="primary"
-                className="bg-[#7C9A6D] text-white"
               >
                 Back Home
               </Button>
-              <Button to="/articles" className="bg-[#7C9A6D] text-white">
+              <Button to="/articles" variant="secondary">
                 Open Articles
               </Button>
             </div>
@@ -162,7 +161,7 @@ const AboutPage = () => {
               </div>
             </div>
 
-            <Button className="mt-5 bg-[#7C9A6D] text-white">
+            <Button className="mt-5">
               View Section
             </Button>
           </div>
