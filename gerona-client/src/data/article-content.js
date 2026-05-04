@@ -1,7 +1,7 @@
-import capySwim4 from "./capy-swim4.jpg";
-import capyHi from "./capy-hi.jpg";
-import capyWater from "./capy-water.jpg";
-import capyFunny from "./capy-funny.jpg";
+import capySwim4 from "../assets/capy-swim4.jpg";
+import capyHi from "../assets/capy-hi.jpg";
+import capyWater from "../assets/capy-water.jpg";
+import capyFunny from "../assets/capy-funny.jpg";
 
 const articles = [
   {

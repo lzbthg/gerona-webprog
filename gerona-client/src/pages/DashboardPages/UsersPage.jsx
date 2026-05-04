@@ -1,286 +1,553 @@
-import React from "react";
-
-import { Typography, Box, Card, CardContent } from "@mui/material";
-import Stack from "@mui/material/Stack";
+import { useState } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Paper,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { DataGrid } from "@mui/x-data-grid";
+import usersSeed from "../../data/users.json?raw";
 
-import PeopleIcon from "@mui/icons-material/People";
-import GroupIcon from "@mui/icons-material/Group";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import BadgeIcon from "@mui/icons-material/Badge";
+const roles = ["admin", "editor", "viewer"];
+const genders = ["male", "female", "other"];
 
-const columns = [
-  { field: "id", headerName: "ID", width: 90 },
-  { field: "firstName", headerName: "First name", width: 150, editable: true },
-  { field: "lastName", headerName: "Last name", width: 150, editable: true },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 110,
-    editable: true,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ""} ${row.lastName || ""}`,
-  },
-];
+const blankForm = {
+  firstName: "",
+  lastName: "",
+  age: "",
+  gender: "",
+  contactNumber: "",
+  email: "",
+  role: "",
+  username: "",
+  password: "",
+  address: "",
+  isActive: true,
+};
 
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 14 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 31 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 31 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 11 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
+const labelize = (value) =>
+  value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : "";
 
-function UsersPage() {
-  const totalUsers = rows.length;
-  const activeUsers = rows.filter((r) => r.age !== null).length;
-  const newUsers = 3;
+const loadUsers = () => {
+  try {
+    return {
+      users: JSON.parse(usersSeed).map((user, index) => ({
+        id: Number(user.id) || index + 1,
+        firstName: String(user.firstName ?? "").trim(),
+        lastName: String(user.lastName ?? "").trim(),
+        age: String(user.age ?? "").trim(),
+        gender: genders.includes(
+          String(user.gender ?? "")
+            .trim()
+            .toLowerCase(),
+        )
+          ? String(user.gender ?? "")
+              .trim()
+              .toLowerCase()
+          : "",
+        contactNumber: String(user.contactNumber ?? "").trim(),
+        email: String(user.email ?? "")
+          .trim()
+          .toLowerCase(),
+        role: roles.includes(
+          String(user.role ?? "")
+            .trim()
+            .toLowerCase(),
+        )
+          ? String(user.role ?? "")
+              .trim()
+              .toLowerCase()
+          : "editor",
+        username: String(user.username ?? "")
+          .trim()
+          .toLowerCase(),
+        password: String(user.password ?? ""),
+        address: String(user.address ?? "").trim(),
+        isActive: typeof user.isActive === "boolean" ? user.isActive : true,
+      })),
+      error: "",
+    };
+  } catch {
+    return {
+      users: [],
+      error: "Unable to read users from src/assets/users.json.",
+    };
+  }
+};
 
-  const avgAge =
-    rows.reduce((sum, row) => sum + (row.age || 0), 0) /
-    rows.filter((r) => r.age !== null).length;
+const seed = loadUsers();
+
+const UsersPage = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [users, setUsers] = useState(seed.users);
+  const [modal, setModal] = useState({ open: false, id: null });
+  const [form, setForm] = useState(blankForm);
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const resetForm = () => {
+    setForm({ ...blankForm });
+    setErrors({});
+  };
+
+  const openModal = (user) => {
+    setModal({ open: true, id: user?.id ?? null });
+    setForm(user ? { ...blankForm, ...user } : { ...blankForm });
+    setErrors({});
+  };
+
+  const closeModal = () => {
+    setModal({ open: false, id: null });
+    setShowPassword(false);
+    resetForm();
+  };
+
+  const handleChange = ({ target: { name, value, checked, type } }) => {
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validate = () => {
+    const nextErrors = {};
+    const email = form.email.trim().toLowerCase();
+    const username = form.username.trim().toLowerCase();
+
+    [
+      ["firstName", "First name"],
+      ["lastName", "Last name"],
+      ["age", "Age"],
+      ["gender", "Gender"],
+      ["contactNumber", "Contact number"],
+      ["email", "Email"],
+      ["role", "Role"],
+      ["username", "Username"],
+      ["password", "Password"],
+      ["address", "Address"],
+    ].forEach(([key, label]) => {
+      if (!String(form[key]).trim()) {
+        nextErrors[key] = `${label} is required.`;
+      }
+    });
+
+    if (!nextErrors.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+
+    if (
+      !nextErrors.email &&
+      users.some((user) => user.id !== modal.id && user.email === email)
+    ) {
+      nextErrors.email = "Email address already exists.";
+    }
+
+    if (
+      !nextErrors.username &&
+      users.some((user) => user.id !== modal.id && user.username === username)
+    ) {
+      nextErrors.username = "Username already exists.";
+    }
+
+    if (!nextErrors.password && form.password.length < 8) {
+      nextErrors.password = "Password must be at least 8 characters.";
+    }
+
+    if (!nextErrors.contactNumber && !/^\d{11}$/.test(form.contactNumber)) {
+      nextErrors.contactNumber = "Contact number must be exactly 11 digits.";
+    }
+
+    if (!nextErrors.age && !/^\d+$/.test(form.age)) {
+      nextErrors.age = "Age must be a number only.";
+    }
+
+    if (!nextErrors.username && /\s/.test(form.username)) {
+      nextErrors.username = "Username must not contain spaces.";
+    }
+
+    return nextErrors;
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const nextErrors = validate();
+
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    const nextUser = {
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
+      age: form.age.trim(),
+      gender: form.gender.trim().toLowerCase(),
+      contactNumber: form.contactNumber.trim(),
+      email: form.email.trim().toLowerCase(),
+      role: form.role.trim().toLowerCase(),
+      username: form.username.trim().toLowerCase(),
+      password: form.password,
+      address: form.address.trim(),
+      isActive: form.isActive,
+    };
+
+    setUsers((prev) =>
+      modal.id
+        ? prev.map((user) =>
+            user.id === modal.id ? { ...user, ...nextUser } : user,
+          )
+        : [
+            ...prev,
+            {
+              id:
+                prev.reduce(
+                  (max, user) => Math.max(max, Number(user.id) || 0),
+                  0,
+                ) + 1,
+              ...nextUser,
+            },
+          ],
+    );
+
+    closeModal();
+  };
+
+  const toggleStatus = (id) => {
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id ? { ...user, isActive: !user.isActive } : user,
+      ),
+    );
+  };
+
+  const fieldProps = (name, label, extra = {}) => ({
+    name,
+    label,
+    value: form[name],
+    onChange: handleChange,
+    error: Boolean(errors[name]),
+    helperText: errors[name],
+    fullWidth: true,
+    ...extra,
+  });
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 80 },
+    {
+      field: "fullName",
+      headerName: "Full Name",
+      flex: 1,
+      minWidth: 170,
+      valueGetter: (_, row) => `${row.firstName} ${row.lastName}`.trim(),
+    },
+
+    { field: "username", headerName: "Username", minWidth: 150 },
+    { field: "age", headerName: "Age", minWidth: 90 },
+    {
+      field: "gender",
+      headerName: "Gender",
+      minWidth: 110,
+      valueGetter: (_, row) => labelize(row.gender),
+    },
+    { field: "contactNumber", headerName: "Contact Number", minWidth: 160 },
+    { field: "email", headerName: "Email", flex: 1.1, minWidth: 220 },
+    {
+      field: "role",
+      headerName: "Role",
+      minWidth: 120,
+      valueGetter: (_, row) => labelize(row.role),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 120,
+      sortable: false,
+      renderCell: ({ row }) => (
+        <Chip
+          size="small"
+          label={row.isActive ? "Active" : "Inactive"}
+          color={row.isActive ? "success" : "default"}
+          variant={row.isActive ? "filled" : "outlined"}
+        />
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      minWidth: 220,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }) => (
+        <Stack direction="row" spacing={1} sx={{ py: 0.5 }}>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => openModal(row)}
+          >
+            Edit
+          </Button>
+          <Button
+            size="small"
+            variant="contained"
+            color={row.isActive ? "warning" : "success"}
+            onClick={() => toggleStatus(row.id)}
+          >
+            {row.isActive ? "Disable" : "Activate"}
+          </Button>
+        </Stack>
+      ),
+    },
+  ];
+
+  const filteredUsers = users.filter((user) => {
+    const searchText = search.toLowerCase();
+
+    const matchSearch =
+      user.firstName.toLowerCase().includes(searchText) ||
+      user.lastName.toLowerCase().includes(searchText) ||
+      user.email.toLowerCase().includes(searchText) ||
+      user.username.toLowerCase().includes(searchText);
+
+    const matchRole = roleFilter ? user.role === roleFilter : true;
+    const matchGender = genderFilter ? user.gender === genderFilter : true;
+    const matchStatus =
+      statusFilter !== "" ? user.isActive.toString() === statusFilter : true;
+
+    return matchSearch && matchRole && matchGender && matchStatus;
+  });
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        backgroundColor: "#FFFFFF",
-        p: 3,
-      }}
-    >
-      <Typography
-        variant="h4"
+    <Box sx={{ width: "100%", minWidth: 0 }}>
+      <Box
         sx={{
-          fontWeight: 700,
-          color: "#3E3E3E",
           mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 2,
+          flexWrap: "wrap",
         }}
       >
-        Users
-      </Typography>
-
-      {/* KPI CARDS */}
-      <Stack direction={{ xs: "column", md: "row" }} spacing={3} sx={{ mb: 4 }}>
-        <Card
-          sx={{
-            flex: 1,
-            borderRadius: 3,
-            background: "linear-gradient(135deg, #E7F0FF, #F5F9FF)",
-            border: "1px solid #D6E4FF",
-            boxShadow: "0 6px 14px rgba(37,99,235,0.12)",
-            transition: "0.2s",
-            "&:hover": {
-              transform: "translateY(-4px)",
-              boxShadow: "0 10px 20px rgba(0,0,0,0.12)",
-            },
-          }}
+        <Typography variant="h4">Users</Typography>
+        <Button
+          variant="contained"
+          onClick={() => openModal()}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
         >
-          <CardContent>
-            <Box
-              sx={{
-                width: 45,
-                height: 45,
-                borderRadius: "50%",
-                backgroundColor: "#DBEAFE",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mb: 1,
-              }}
-            >
-              <PeopleIcon sx={{ color: "#2563EB" }} />
-            </Box>
+          Add User
+        </Button>
+      </Box>
 
-            <Typography sx={{ color: "#6B7280", fontSize: 14 }}>
-              Total Users
-            </Typography>
+      {seed.error ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {seed.error}
+        </Alert>
+      ) : null}
 
-            <Typography sx={{ fontSize: 30, fontWeight: 700 }}>
-              {totalUsers}
-            </Typography>
-          </CardContent>
-        </Card>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mb: 2 }}>
+        <TextField
+          label="Search"
+          placeholder="Search name, email, username..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          fullWidth
+        />
 
-        <Card
-          sx={{
-            flex: 1,
-            borderRadius: 3,
-            background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)",
-            border: "1px solid #BBF7D0",
-            boxShadow: "0 6px 14px rgba(16,185,129,0.12)",
-            transition: "0.2s",
-            "&:hover": {
-              transform: "translateY(-4px)",
-              boxShadow: "0 10px 20px rgba(0,0,0,0.12)",
-            },
-          }}
+        <TextField
+          select
+          label="Role"
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          sx={{ minWidth: 140 }}
         >
-          <CardContent>
-            <Box
-              sx={{
-                width: 45,
-                height: 45,
-                borderRadius: "50%",
-                backgroundColor: "#D1FAE5",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mb: 1,
-              }}
-            >
-              <GroupIcon sx={{ color: "#10B981" }} />
-            </Box>
+          <MenuItem value="">All Roles</MenuItem>
+          {roles.map((role) => (
+            <MenuItem key={role} value={role}>
+              {labelize(role)}
+            </MenuItem>
+          ))}
+        </TextField>
 
-            <Typography sx={{ color: "#6B7280", fontSize: 14 }}>
-              Active Users
-            </Typography>
-
-            <Typography sx={{ fontSize: 30, fontWeight: 700 }}>
-              {activeUsers}
-            </Typography>
-          </CardContent>
-        </Card>
-
-        <Card
-          sx={{
-            flex: 1,
-            borderRadius: 3,
-            background: "linear-gradient(135deg, #FFFBEB, #FEF3C7)",
-            border: "1px solid #FDE68A",
-            boxShadow: "0 6px 14px rgba(245,158,11,0.12)",
-            transition: "0.2s",
-            "&:hover": {
-              transform: "translateY(-4px)",
-              boxShadow: "0 10px 20px rgba(0,0,0,0.12)",
-            },
-          }}
+        <TextField
+          select
+          label="Gender"
+          value={genderFilter}
+          onChange={(e) => setGenderFilter(e.target.value)}
+          sx={{ minWidth: 140 }}
         >
-          <CardContent>
-            <Box
-              sx={{
-                width: 45,
-                height: 45,
-                borderRadius: "50%",
-                backgroundColor: "#FEF3C7",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mb: 1,
-              }}
-            >
-              <PersonAddIcon sx={{ color: "#D97706" }} />
-            </Box>
+          <MenuItem value="">All Genders</MenuItem>
+          {genders.map((gender) => (
+            <MenuItem key={gender} value={gender}>
+              {labelize(gender)}
+            </MenuItem>
+          ))}
+        </TextField>
 
-            <Typography sx={{ color: "#6B7280", fontSize: 14 }}>
-              New Users
-            </Typography>
-
-            <Typography sx={{ fontSize: 30, fontWeight: 700 }}>
-              {newUsers}
-            </Typography>
-          </CardContent>
-        </Card>
-
-        <Card
-          sx={{
-            flex: 1,
-            borderRadius: 3,
-            background: "linear-gradient(135deg, #FEF2F2, #FEE2E2)",
-            border: "1px solid #FECACA",
-            boxShadow: "0 6px 14px rgba(239,68,68,0.12)",
-            transition: "0.2s",
-            "&:hover": {
-              transform: "translateY(-4px)",
-              boxShadow: "0 10px 20px rgba(0,0,0,0.12)",
-            },
-          }}
+        <TextField
+          select
+          label="Status"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          sx={{ minWidth: 140 }}
         >
-          <CardContent>
-            <Box
-              sx={{
-                width: 45,
-                height: 45,
-                borderRadius: "50%",
-                backgroundColor: "#FEE2E2",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mb: 1,
-              }}
-            >
-              <BadgeIcon sx={{ color: "#DC2626" }} />
-            </Box>
-
-            <Typography sx={{ color: "#6B7280", fontSize: 14 }}>
-              Average Age
-            </Typography>
-
-            <Typography sx={{ fontSize: 30, fontWeight: 700 }}>
-              {avgAge.toFixed(1)}
-            </Typography>
-          </CardContent>
-        </Card>
+          <MenuItem value="">All Status</MenuItem>
+          <MenuItem value="true">Active</MenuItem>
+          <MenuItem value="false">Inactive</MenuItem>
+        </TextField>
       </Stack>
 
-      {/* TABLE */}
-      <Card
-        sx={{
-          borderRadius: 3,
-          border: "1px solid #E5E7EB",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-          background: "linear-gradient(to right, #ffffff, #F9FAFB)",
-        }}
-      >
-        <CardContent>
-          <Typography
-            sx={{
-              fontSize: 18,
-              fontWeight: 700,
-              mb: 2,
-              borderLeft: "5px solid #2563EB",
-              pl: 1,
-            }}
+      <Paper sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0, overflow: "hidden" }}>
+        {users.length ? (
+          <Box
+            sx={{ height: { xs: 460, sm: 520 }, width: "100%", minWidth: 0 }}
           >
-            User Management Table
-          </Typography>
-
-          <Box sx={{ height: 500, width: "100%" }}>
             <DataGrid
-              rows={rows}
+              rows={filteredUsers}
               columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: 5 },
-                },
-              }}
-              pageSizeOptions={[5]}
-              checkboxSelection
               disableRowSelectionOnClick
+              pageSizeOptions={[5, 10]}
+              initialState={{
+                pagination: { paginationModel: { pageSize: 5, page: 0 } },
+              }}
               sx={{
-                border: "none",
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#F3F4F6",
-                  fontWeight: 600,
-                },
-                "& .MuiDataGrid-row:hover": {
-                  backgroundColor: "#F9FAFB",
+                minWidth: 0,
+                "& .MuiDataGrid-cell, & .MuiDataGrid-columnHeader": {
+                  outline: "none",
                 },
               }}
             />
           </Box>
-        </CardContent>
-      </Card>
+        ) : (
+          <Alert severity="info">
+            No users found. Use Add User to create your first record.
+          </Alert>
+        )}
+      </Paper>
+
+      <Dialog
+        open={modal.open}
+        onClose={closeModal}
+        fullWidth
+        fullScreen={isMobile}
+        maxWidth="md"
+      >
+        <Box component="form" onSubmit={handleSubmit}>
+          <DialogTitle>{modal.id ? "Edit User" : "Add User"}</DialogTitle>
+          <DialogContent dividers sx={{ px: { xs: 2, sm: 3 } }}>
+            <Stack spacing={2} sx={{ pt: 1 }}>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField {...fieldProps("firstName", "First name")} />
+                <TextField {...fieldProps("lastName", "Last name")} />
+              </Stack>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField {...fieldProps("age", "Age")} />
+                <TextField
+                  {...fieldProps("gender", "Gender", { select: true })}
+                >
+                  {genders.map((gender) => (
+                    <MenuItem key={gender} value={gender}>
+                      {labelize(gender)}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Stack>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField {...fieldProps("contactNumber", "Contact Number")} />
+                <TextField
+                  {...fieldProps("email", "Email Address", { type: "email" })}
+                />
+              </Stack>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField {...fieldProps("role", "Role", { select: true })}>
+                  {roles.map((role) => (
+                    <MenuItem key={role} value={role}>
+                      {labelize(role)}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField {...fieldProps("username", "Username")} />
+              </Stack>
+              <TextField
+                {...fieldProps("password", "Password", {
+                  type: showPassword ? "text" : "password",
+                  slotProps: {
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            onMouseDown={(event) => event.preventDefault()}
+                            aria-label={
+                              showPassword ? "Hide password" : "Show password"
+                            }
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  },
+                })}
+              />
+              <TextField
+                {...fieldProps("address", "Address", {
+                  multiline: true,
+                  rows: 3,
+                })}
+              />
+              <FormControlLabel
+                control={
+                  <Switch
+                    name="isActive"
+                    checked={form.isActive}
+                    onChange={handleChange}
+                  />
+                }
+                label={
+                  form.isActive
+                    ? "User status: Active"
+                    : "User status: Inactive"
+                }
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, py: 2 }}>
+            <Button onClick={closeModal}>Cancel</Button>
+            <Button type="submit" variant="contained">
+              {modal.id ? "Update User" : "Save User"}
+            </Button>
+          </DialogActions>
+        </Box>
+      </Dialog>
     </Box>
   );
-}
+};
 
 export default UsersPage;
