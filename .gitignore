@@ -1,5 +1,5 @@
 gerona-server/.env
 gerona-server/node_modules
 
-gerona-server/node_modules
-gerona-server/.env
+gerona-client/.env
+gerona-client/node_modules
