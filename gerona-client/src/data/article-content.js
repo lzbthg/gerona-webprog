@@ -3,6 +3,13 @@ import capyHi from "../assets/capy-hi.jpg";
 import capyWater from "../assets/capy-water.jpg";
 import capyFunny from "../assets/capy-funny.jpg";
 
+export const articleImages = {
+  capySwim4,
+  capyHi,
+  capyWater,
+  capyFunny,
+};
+
 const articles = [
   {
     name: "capybara-habitats",

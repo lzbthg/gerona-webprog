@@ -178,7 +178,7 @@ function ReportsPage() {
         width: "100%",
         gap: 3,
         minHeight: "100vh",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#FFF8F0",
         p: 3,
       }}
     >
@@ -193,7 +193,7 @@ function ReportsPage() {
             variant="h4"
             sx={{
               fontWeight: 700,
-              color: "#3E3E3E",
+              color: "#3E2C23",
               mb: 1,
             }}
           >
@@ -202,7 +202,7 @@ function ReportsPage() {
 
           <Typography
             sx={{
-              color: "#6B7280",
+              color: "#7A6A58",
               fontSize: 14,
               maxWidth: 600,
             }}
@@ -221,11 +221,60 @@ function ReportsPage() {
             ml: "auto",
           }}
         >
-          <Button variant="contained">Generate</Button>
-          <Button variant="outlined" onClick={handlePrint}>
+          <Button
+            variant="contained"
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 700,
+              px: 2.5,
+              background: "linear-gradient(135deg, #8B5E3C, #A47148)",
+              boxShadow: "0 8px 18px rgba(139,94,60,0.18)",
+
+              "&:hover": {
+                background: "linear-gradient(135deg, #6F472D, #8B5E3C)",
+              },
+            }}
+          >
+            Generate
+          </Button>
+
+          <Button
+            variant="outlined"
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 600,
+              borderColor: "#D8C2A8",
+              color: "#6F472D",
+
+              "&:hover": {
+                borderColor: "#8B5E3C",
+                backgroundColor: "#F7EBDD",
+              },
+            }}
+            onClick={handlePrint}
+          >
             Export
           </Button>
-          <Button variant="outlined">Filter</Button>
+
+          <Button
+            variant="outlined"
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 600,
+              borderColor: "#D8C2A8",
+              color: "#6F472D",
+
+              "&:hover": {
+                borderColor: "#8B5E3C",
+                backgroundColor: "#F7EBDD",
+              },
+            }}
+          >
+            Filter
+          </Button>
         </Stack>
       </Stack>
 
@@ -239,8 +288,8 @@ function ReportsPage() {
             sx={{
               flex: 1,
               borderRadius: 3,
-              background: "linear-gradient(135deg, #E7F0FF, #F5F9FF)",
-              border: "1px solid #D6E4FF",
+              background: "linear-gradient(135deg, #FFF3E6, #FFF8F0)",
+              border: "1px solid #E5D3B8",
               boxShadow: "0 6px 14px rgba(37,99,235,0.12)",
               transition: "0.2s",
               "&:hover": {
@@ -255,14 +304,14 @@ function ReportsPage() {
                   width: 45,
                   height: 45,
                   borderRadius: "50%",
-                  backgroundColor: "#DBEAFE",
+                  backgroundColor: "#F2E4D5",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   mb: 1,
                 }}
               >
-                <AssessmentIcon sx={{ color: "#2563EB" }} />
+                <AssessmentIcon sx={{ color: "#8B5E3C" }} />
               </Box>
 
               <Typography sx={{ color: "#6B7280", fontSize: 14 }}>
@@ -279,8 +328,8 @@ function ReportsPage() {
             sx={{
               flex: 1,
               borderRadius: 3,
-              background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)",
-              border: "1px solid #BBF7D0",
+              background: "linear-gradient(135deg, #EEF6EC, #F8FBF7)",
+              border: "1px solid #CFE3CC",
               boxShadow: "0 6px 14px rgba(16,185,129,0.12)",
               transition: "0.2s",
               "&:hover": {
@@ -319,8 +368,8 @@ function ReportsPage() {
             sx={{
               flex: 1,
               borderRadius: 3,
-              background: "linear-gradient(135deg, #FFFBEB, #FEF3C7)",
-              border: "1px solid #FDE68A",
+              background: "linear-gradient(135deg, #F8ECD0, #FFF8E8)",
+              border: "1px solid #E8D3A5",
               boxShadow: "0 6px 14px rgba(245,158,11,0.12)",
               transition: "0.2s",
               "&:hover": {
@@ -453,9 +502,9 @@ function ReportsPage() {
             key={i}
             sx={{
               borderRadius: 3,
-              border: "1px solid #E5E7EB",
+              border: "1px solid #E5D3B8",
               boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-              background: "linear-gradient(to right, #ffffff, #F9FAFB)",
+              background: "linear-gradient(to right, #FFFDF9, #FFF8F0)",
               mb: 3,
               transition: "0.2s",
               "&:hover": {
@@ -495,8 +544,8 @@ function ReportsPage() {
         <Card
           sx={{
             borderRadius: 3,
-            border: "1px solid #E5E7EB",
-            background: "linear-gradient(to right, #ffffff, #F9FAFB)",
+            border: "1px solid #E5D3B8",
+            background: "linear-gradient(to right, #FFFDF9, #FFF8F0)",
             boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
             transition: "0.2s",
             "&:hover": {
@@ -510,7 +559,7 @@ function ReportsPage() {
               System Activity Log
             </Typography>
 
-            <Typography sx={{ fontSize: 13, color: "#6B7280", mb: 2 }}>
+            <Typography sx={{ fontSize: 13, color: "#7A6A58", mb: 2 }}>
               Real-time system event tracking across analytics, reports, and
               insights modules showing operational changes and system impact
               levels.
@@ -520,7 +569,6 @@ function ReportsPage() {
               <DataGrid
                 rows={rows}
                 columns={columns}
-                
                 initialState={{
                   pagination: {
                     paginationModel: { pageSize: 5 },
@@ -529,6 +577,24 @@ function ReportsPage() {
                 pageSizeOptions={[5]}
                 checkboxSelection
                 disableRowSelectionOnClick
+                sx={{
+                  border: "none",
+
+                  "& .MuiDataGrid-columnHeaders": {
+                    backgroundColor: "#F7EBDD",
+                    color: "#3E2C23",
+                    borderBottom: "1px solid #E5D3B8",
+                  },
+
+                  "& .MuiDataGrid-row:hover": {
+                    backgroundColor: "#FFF8F0",
+                  },
+
+                  "& .MuiDataGrid-footerContainer": {
+                    borderTop: "1px solid #E5D3B8",
+                    backgroundColor: "#FFFDF9",
+                  },
+                }}
               />
             </Box>
           </CardContent>

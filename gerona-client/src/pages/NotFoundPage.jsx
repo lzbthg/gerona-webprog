@@ -3,33 +3,54 @@ import capyLost from "../assets/capy-lost.png";
 
 const NotFoundPage = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#FFF8F0] px-4">
-      <div className="max-w-xl text-center">
-        <h1 className="text-6xl font-bold text-[#3E2C23]">404</h1>
+    <div className="flex min-h-screen items-center justify-center bg-[#FFF8F0] px-4 py-10">
+      <div className="w-full max-w-2xl rounded-[2rem] border-2 border-[#E5D3B8] bg-[#FFFDF9] p-8 text-center shadow-[0_12px_40px_rgba(139,94,60,0.08)] sm:p-12">
+        {/* 404 LABEL */}
+        <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-[#7C9A6D]">
+          Error 404
+        </p>
 
-        <div className="mt-4 flex justify-center">
+        {/* TITLE */}
+        <h1 className="mt-4 text-6xl font-black tracking-tight text-[#3E2C23] sm:text-7xl">
+          Lost Capybara 
+        </h1>
+
+        {/* IMAGE */}
+        <div className="mt-8 flex justify-center">
           <img
             src={capyLost}
             alt="Lost Capybara"
-            className="w-55 h-55 object-contain"
+            className="h-52 w-52 object-contain sm:h-64 sm:w-64"
           />
         </div>
 
-        <h2 className="mt-4 text-2xl font-semibold text-[#3E2C23]">
-          Oops! Page not found 🐹
+        {/* SUBTITLE */}
+        <h2 className="mt-6 text-2xl font-semibold text-[#3E2C23] sm:text-3xl">
+          Oops! This page wandered away.
         </h2>
 
-        <p className="mt-3 text-sm leading-6 text-[#5A4B3A]">
-          Looks like this page wandered off like a capybara. The page you're
-          looking for doesn’t exist or has been moved.
+        {/* DESCRIPTION */}
+        <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-[#5A4B3A] sm:text-base">
+          Looks like the page you're searching for took a relaxing dip
+          somewhere else. It may have been moved, deleted, or never existed in
+          the first place.
         </p>
 
-        <div className="mt-6 flex justify-center gap-3">
-          <Button to="/" variant="primary">
+        {/* BUTTONS */}
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button
+            to="/"
+            variant="primary"
+            className="min-w-[170px]"
+          >
             Back Home
           </Button>
 
-          <Button to="/articles" variant="secondary">
+          <Button
+            to="/articles"
+            variant="secondary"
+            className="min-w-[170px]"
+          >
             Browse Articles
           </Button>
         </div>

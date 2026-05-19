@@ -1,18 +1,57 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Button from "../../components/Button.jsx";
-import articles from "../../data/article-content.js";
+import { getArticleBySlug } from "../../services/ArticleService";
+import { articleImages } from "../../data/article-content";
 
 function ArticlePage() {
   const { name } = useParams();
-  const article = articles.find(article => article.name === name);
+  const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  if (!article) {
+  useEffect(() => {
+    const loadArticle = async () => {
+      try {
+        setLoading(true);
+        const { data } = await getArticleBySlug(name);
+        setArticle(data);
+      } catch (err) {
+        console.error(err);
+        setError("Article not found.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (name) {
+      loadArticle();
+    }
+  }, [name]);
+
+  if (loading) {
     return (
       <div className="flex w-full flex-col gap-6">
         <section className="border-y-2 border-[#8B5E3C] bg-[#FFF8F0] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
           <div className="max-w-3xl">
-            <h1 className="text-3xl font-bold text-[#3E2C23]">Article not found</h1>
-            <Button to="/articles" className="mt-6">Back to Articles</Button>
+            <p className="text-sm text-[#5A4B3A]">Loading article...</p>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (error || !article) {
+    return (
+      <div className="flex w-full flex-col gap-6">
+        <section className="border-y-2 border-[#8B5E3C] bg-[#FFF8F0] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <div className="max-w-3xl">
+            <h1 className="text-3xl font-bold text-[#3E2C23]">
+              Article not found
+            </h1>
+            <Button to="/articles" className="mt-6">
+              Back to Articles
+            </Button>
           </div>
         </section>
       </div>
@@ -36,7 +75,7 @@ function ArticlePage() {
           </h1>
 
           <p className="mt-2 text-sm text-[#5A4B3A]">
-            {article.name
+            {article.slug
               .split("-")
               .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(" ")}
@@ -48,21 +87,24 @@ function ArticlePage() {
         <div className="mx-auto max-w-3xl">
           <div className="w-full aspect-[4/3] overflow-hidden rounded-[1.25rem] border-2 border-[#D9C2A7] bg-[#FFEAD2] mb-8">
             <img
-              src={article.image}
+              src={article.imageUrl || articleImages[article.imageKey]}
               alt={article.title}
               className="w-full h-full object-cover scale-95 rounded-xl"
             />
           </div>
 
           <div className="prose prose-sm max-w-none space-y-4 text-[#5A4B3A]">
-            {article.content.map((paragraph, index) => (
-              <p
-                key={index}
-                className="text-base leading-7 text-[#5A4B3A] whitespace-pre-wrap"
-              >
-                {paragraph}
-              </p>
-            ))}
+            {article.content
+              .split(/\n+/)
+              .filter(Boolean)
+              .map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="text-base leading-7 text-[#5A4B3A] whitespace-pre-wrap"
+                >
+                  {paragraph}
+                </p>
+              ))}
           </div>
 
           <div className="mt-8 border-t-2 border-[#8B5E3C] pt-6">

@@ -26,7 +26,6 @@ const rows = [
 
 function DashboardPage() {
   const Location = useLocation();
-
   const totalUsers = rows.length;
 
   const avgAge = (
@@ -38,21 +37,35 @@ function DashboardPage() {
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#FFF8F0",
         p: 3,
       }}
     >
       {/* TITLE */}
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 700,
-          color: "#3E3E3E",
-          mb: 3,
-        }}
-      >
-        Dashboard
-      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 700,
+            color: "#3E2C23",
+            mb: 1,
+          }}
+        >
+          Dashboard
+        </Typography>
+
+        <Typography
+          sx={{
+            color: "#7A6A58",
+            fontSize: 14,
+            maxWidth: 600,
+          }}
+        >
+          Monitor user activity, engagement growth, analytics, and system
+          performance through interactive dashboard insights and overview
+          statistics.
+        </Typography>
+      </Box>
 
       {/* KPI CARDS */}
       <Stack direction={{ xs: "column", md: "row" }} spacing={3} sx={{ mb: 4 }}>
@@ -60,8 +73,8 @@ function DashboardPage() {
           sx={{
             flex: 1,
             borderRadius: 3,
-            background: "linear-gradient(135deg, #E7F0FF, #F5F9FF)",
-            border: "1px solid #D6E4FF",
+            background: "linear-gradient(135deg, #FFF3E6, #FFF8F0)",
+            border: "1px solid #E5D3B8",
             boxShadow: "0 6px 14px rgba(37,99,235,0.12)",
             transition: "0.2s",
             "&:hover": {
@@ -76,14 +89,14 @@ function DashboardPage() {
                 width: 45,
                 height: 45,
                 borderRadius: "50%",
-                backgroundColor: "#DBEAFE",
+                backgroundColor: "#F2E4D5",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 mb: 1,
               }}
             >
-              <PeopleIcon sx={{ color: "#2563EB" }} />
+              <PeopleIcon sx={{ color: "#8B5E3C" }} />
             </Box>
 
             <Typography sx={{ color: "#6B7280", fontSize: 14 }}>
@@ -100,8 +113,8 @@ function DashboardPage() {
           sx={{
             flex: 1,
             borderRadius: 3,
-            background: "linear-gradient(135deg, #ECFDF5, #F0FDF4)",
-            border: "1px solid #BBF7D0",
+            background: "linear-gradient(135deg, #EEF6EC, #F8FBF7)",
+            border: "1px solid #CFE3CC",
             boxShadow: "0 6px 14px rgba(16,185,129,0.12)",
             transition: "0.2s",
             "&:hover": {
@@ -138,8 +151,8 @@ function DashboardPage() {
           sx={{
             flex: 1,
             borderRadius: 3,
-            background: "linear-gradient(135deg, #FFFBEB, #FEF3C7)",
-            border: "1px solid #FDE68A",
+            background: "linear-gradient(135deg, #F8ECD0, #FFF8E8)",
+            border: "1px solid #E8D3A5",
             boxShadow: "0 6px 14px rgba(245,158,11,0.12)",
             transition: "0.2s",
             "&:hover": {
@@ -178,8 +191,8 @@ function DashboardPage() {
           sx={{
             flex: 1,
             borderRadius: 3,
-            background: "linear-gradient(135deg, #FEF2F2, #FEE2E2)",
-            border: "1px solid #FECACA",
+            background: "linear-gradient(135deg, #F6E7DF, #FFF4EF)",
+            border: "1px solid #E8C7B8",
             boxShadow: "0 6px 14px rgba(239,68,68,0.12)",
             transition: "0.2s",
             "&:hover": {
@@ -194,14 +207,14 @@ function DashboardPage() {
                 width: 45,
                 height: 45,
                 borderRadius: "50%",
-                backgroundColor: "#FEE2E2",
+                backgroundColor: "#F3DDD3",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 mb: 1,
               }}
             >
-              <ShowChartIcon sx={{ color: "#DC2626" }} />
+              <ShowChartIcon sx={{ color: "#B65E4A" }} />
             </Box>
 
             <Typography sx={{ color: "#6B7280", fontSize: 14 }}>
@@ -217,9 +230,9 @@ function DashboardPage() {
       <Card
         sx={{
           borderRadius: 3,
-          border: "1px solid #E5E7EB",
+          border: "1px solid #E5D3B8",
           boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-          backgroundColor: "#FFFFFF",
+          background: "linear-gradient(to right, #FFFDF9, #FFF8F0)",
         }}
       >
         <CardContent>
@@ -227,7 +240,7 @@ function DashboardPage() {
             sx={{
               fontSize: 18,
               fontWeight: 700,
-              color: "#111827",
+              color: "#3E2C23",
               mb: 2,
             }}
           >
@@ -238,7 +251,8 @@ function DashboardPage() {
             sx={{
               height: 500,
               width: "100%",
-              borderRadius: 2,
+              borderRadius: "18px",
+              border: "1px solid #E5D3B8",
               overflow: "hidden",
             }}
           >

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { styled, useTheme, alpha } from "@mui/material/styles";
+import { styled, useTheme} from "@mui/material/styles";
 
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -53,6 +53,12 @@ const dashboardNavItems = [
     title: "Users",
     to: "/dashboard/users",
     icon: PeopleIcon,
+  },
+  {
+    label: "Articles",
+    title: "Articles",
+    to: "/dashboard/articles",
+    icon: ArticleIcon,
   },
 ];
 
@@ -132,14 +138,18 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  borderRadius: "999px",
+  backgroundColor: "#FFF8F0",
+  border: "1px solid #E5D3B8",
+
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: "#FFFDF9",
   },
+
   marginRight: theme.spacing(2),
   marginLeft: 0,
   width: "100%",
+
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(3),
     width: "auto",
@@ -169,6 +179,14 @@ const DashLayout = () => {
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
   const navigate = useNavigate();
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userType = storedUser?.type;
+
+  useEffect(() => {
+    if (!storedUser) {
+      navigate("/auth/signin");
+    }
+  }, [navigate, storedUser]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -179,7 +197,9 @@ const DashLayout = () => {
   };
 
   const handleLogout = () => {
-    navigate("/");
+    localStorage.removeItem("user");
+
+    navigate("/auth/signin");
   };
 
   return (
@@ -189,7 +209,15 @@ const DashLayout = () => {
 
         {/* App Bar */}
         {/* <AppBar position="fixed" open={open}> */}
-        <AppBar position="fixed">
+        <AppBar
+          position="fixed"
+          sx={{
+            bgcolor: "#FFFDF9",
+            color: "#3E2C23",
+            borderBottom: "1px solid #E5D3B8",
+            boxShadow: "0 4px 20px rgba(139,94,60,0.06)",
+          }}
+        >
           <Toolbar>
             <IconButton
               color="inherit"
@@ -224,14 +252,40 @@ const DashLayout = () => {
               />
             </Search>
 
-            <Button color="inherit" variant="outlined" onClick={handleLogout}>
+            <Button
+              variant="contained"
+              onClick={handleLogout}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 700,
+                bgcolor: "#8B5E3C",
+                color: "#FFFDF9",
+                boxShadow: "none",
+
+                "&:hover": {
+                  bgcolor: "#6F472D",
+                  boxShadow: "none",
+                },
+              }}
+            >
               Logout
             </Button>
           </Toolbar>
         </AppBar>
 
         {/* Drawer */}
-        <Drawer variant="permanent" open={open}>
+        <Drawer
+          variant="permanent"
+          open={open}
+          sx={{
+            "& .MuiDrawer-paper": {
+              bgcolor: "#FFF3E6",
+              borderRight: "1px solid #E5D3B8",
+              color: "#3E2C23",
+            },
+          }}
+        >
           <DrawerHeader>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === "rtl" ? (
@@ -246,39 +300,66 @@ const DashLayout = () => {
 
           {/* Drawer List */}
           <List>
-            {dashboardNavItems.map(({ label, to, icon: Icon }) => (
-              <ListItem key={to} disablePadding sx={{ display: "block" }}>
-                <ListItemButton
-                  component={Link}
-                  to={to}
-                  selected={location.pathname === to} 
-                  sx={{
-                    minHeight: 48,
-                    px: 2.5,
-                    justifyContent: open ? "initial" : "center",
-                  }}
-                >
-                  <ListItemIcon
+            {dashboardNavItems
+              .filter((item) => {
+                // HIDE USERS PAGE FOR EDITORS
+                if (userType === "editor" && item.to === "/dashboard/users") {
+                  return false;
+                }
+
+                return true;
+              })
+              .map(({ label, to, icon: Icon }) => (
+                <ListItem key={to} disablePadding sx={{ display: "block" }}>
+                  <ListItemButton
+                    component={Link}
+                    to={to}
+                    selected={location.pathname === to}
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
+                      minHeight: 48,
+                      px: 2.5,
+                      justifyContent: open ? "initial" : "center",
+                      borderRadius: "14px",
+                      mx: 1,
+                      my: 0.5,
+                      color: location.pathname === to ? "#8B5E3C" : "#5A4B3A",
+                      bgcolor: location.pathname === to ? "#F2E4D5" : "transparent",
+
+                      "&:hover": {
+                        bgcolor: "#F7EBDD",
+                      },
                     }}
                   >
-                    {Icon && <Icon />}
-                  </ListItemIcon>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        color: location.pathname === to ? "#8B5E3C" : "#7C9A6D",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {Icon && <Icon />}
+                    </ListItemIcon>
 
-                  <ListItemText
-                    primary={label}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
+                    <ListItemText
+                      primary={label}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
           </List>
         </Drawer>
 
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            bgcolor: "#FFF8F0",
+            minHeight: "100vh",
+          }}
+        >
           <DrawerHeader />
 
           {/* Content */}
